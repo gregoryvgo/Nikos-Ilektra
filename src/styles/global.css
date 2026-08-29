@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=GFS+Bodoni:ital,wght@0,400;0,700;1,400&family=GFS+Didot&family=Marck+Script&family=Montserrat:wght@300;400;500;600&display=swap&subset=greek,greek-ext');
+@import "tailwindcss";
+
+@theme {
+  --font-script: 'Marck Script', cursive;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-bodoni: 'GFS Bodoni', serif;
+  --font-didot: 'GFS Didot', serif;
+  --font-sans: 'Montserrat', sans-serif;
+
+  --color-gold-50: #fbf9f4;
+  --color-gold-100: #f4eee1;
+  --color-gold-500: #c5a880;
+  --color-gold-600: #b08d5b;
+}
+
+/* Direct Utility Classes */
+.font-didot {
+  font-family: 'GFS Didot', serif !important;
+}
+
+.font-bodoni {
+  font-family: 'GFS Bodoni', serif !important;
+}
+
+.font-script {
+  font-family: 'Marck Script', cursive !important;
+}
+
+.font-serif {
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
+}
+
+.font-sans {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #fcfbf9;
+  color: #2b2b2b;
+  overflow-x: hidden;
+}
+
+/* Scroll Fade In */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.fade-in-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}

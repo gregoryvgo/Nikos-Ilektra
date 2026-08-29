@@ -1,0 +1,72 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { VideoEnvelope } from '../components/VideoEnvelope';
+import { Countdown } from '../components/Countdown';
+import { Story } from '../components/Story';
+import { Locations } from '../components/Locations';
+import { Crew } from '../components/Crew';
+import { GiftRegistry } from '../components/GiftRegistry';
+import { Poll } from '../components/Poll';
+import { Guestbook } from '../components/Guestbook';
+import { Footer } from '../components/Footer';
+import { eventData } from '../data/event';
+---
+
+<Layout title={`${eventData.couple.groom} & ${eventData.couple.bride} - Προσκλητήριο`}>
+  <main class="flex flex-col min-h-screen">
+    <VideoEnvelope
+      client:load
+      groom={eventData.couple.groom}
+      bride={eventData.couple.bride}
+      date={eventData.formattedDate}
+      churchName="Ι.Ν. Εσταυρωμένου Αιγάλεω"
+      imageSrc="/invitation.png"
+      videoSrc="/Wedding_invitation_envelope_opens_1080p_202608172336.mp4"
+    />
+
+    <Countdown
+      client:load
+      targetDate={eventData.eventDate}
+      formattedDate={eventData.formattedDate}
+    />
+
+    <Story
+      client:visible
+      title={eventData.story.title}
+      text={eventData.story.text}
+      coupleHashtag={eventData.couple.hashtag}
+    />
+
+    <Locations
+      client:visible
+      ceremony={eventData.locations.ceremony}
+      reception={eventData.locations.reception}
+    />
+
+    <Crew
+      client:visible
+      members={eventData.crew}
+    />
+
+    <GiftRegistry
+      client:visible
+      bankName={eventData.bankAccount.bankName}
+      iban={eventData.bankAccount.iban}
+      beneficiary={eventData.bankAccount.beneficiary}
+    />
+
+    <Poll
+      client:visible
+    />
+
+    <Guestbook
+      client:visible
+    />
+
+    <Footer
+      client:visible
+      groom={eventData.couple.groom}
+      bride={eventData.couple.bride}
+    />
+  </main>
+</Layout>
