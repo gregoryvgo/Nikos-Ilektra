@@ -17,7 +17,8 @@ export const Footer: React.FC<FooterProps> = ({
       <div className="max-w-sm mx-auto space-y-6">
         {/* Couple Signature Monogram */}
         <div className="space-y-1">
-          <p className="font-serif text-2xl font-light tracking-wider text-[#0c1b33]">
+          {/* Μόνο τα ονόματα με χρυσά γράμματα */}
+          <p className="font-serif text-2xl font-light tracking-wider text-[#b89753]">
             {groom} & {bride}
           </p>
           {/* Heart & Year σε ανοιχτό μπλε (#4a729c) */}

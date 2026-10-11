@@ -15,21 +15,30 @@ interface PollQuestion {
 
 const initialPolls: PollQuestion[] = [
   {
-    id: 'foot_step',
-    question: 'Θα πατήσει η νύφη το πόδι του γαμπρού;',
+    id: 'attendance',
+    question: 'Θα μας τιμίσετε με την παρουσία σας;',
     options: [
-      { id: '1', text: 'Φυσικά και θα το πατήσει!', votes: 42 },
-      { id: '2', text: 'Όχι, είναι παραδοσιακός.', votes: 12 },
-      { id: '3', text: 'Κρίμα δεν είναι το παπούτσι;', votes: 18 },
+      { id: '1', text: 'Ναι', votes: 42 },
+      { id: '2', text: 'Όχι', votes: 12 },
     ],
   },
   {
     id: 'honeymoon',
-    question: 'Πού πρέπει να πάνε ταξίδι του μέλιτος;',
+    question: 'Πού θα πάμε μήνα του μέλιτος;',
     options: [
-      { id: '1', text: 'Μπαλί / Εξωτικά', votes: 35 },
-      { id: '2', text: 'Ιταλία / Ρώμη', votes: 24 },
-      { id: '3', text: 'Ιαπωνία / Τόκιο', votes: 29 },
+      { id: '1', text: 'Μαδαγασκάρη', votes: 18 },
+      { id: '2', text: 'Μπαλί', votes: 25 },
+      { id: '3', text: 'Βιέννη-Πράγα', votes: 15 },
+      { id: '4', text: 'Κυψέλη', votes: 31 },
+    ],
+  },
+  {
+    id: 'bride_late',
+    question: 'Πόση ώρα θα αργήσει η νύφη;',
+    options: [
+      { id: '1', text: '10 λεπτά', votes: 14 },
+      { id: '2', text: '1 ώρα', votes: 28 },
+      { id: '3', text: 'ΚΑΘΟΛΟΥ', votes: 19 },
     ],
   },
 ];

@@ -18,20 +18,22 @@ interface LocationsProps {
 export const Locations: React.FC<LocationsProps> = ({ ceremony, reception }) => {
   const ceremonyData: LocationItem = {
     title: ceremony?.title || 'Το Μυστήριο',
-    time: ceremony?.time || '12:00',
-    name: ceremony?.name || 'Πλατεία Εσταυρωμένου',
+    time: ceremony?.time || '12:30',
+    name: ceremony?.name || 'Ιερό Ναό Υψώσεως Τιμίου Σταυρού\n(Εσταυρωμένος)',
     address: ceremony?.address || 'Αιγάλεω, Αττική',
-    mapQuery: ceremony?.mapQuery || 'https://maps.google.com/?q=Plateia+Estavromenou+Aigaleo',
+    // Universal Google Maps Directions URL
+    mapQuery: ceremony?.mapQuery || 'https://maps.google.com/?daddr=Ιερό+Ναός+Υψώσεως+Τιμίου+Σταυρού+Εσταυρωμένος+Αιγάλεω',
     embedUrl: ceremony?.embedUrl || 'https://maps.google.com/maps?q=Plateia%20Estavromenou%20Aigaleo&t=&z=15&ie=UTF8&iwloc=&output=embed',
   };
 
   const receptionData: LocationItem = {
     title: reception?.title || 'Η Δεξίωση',
-    time: reception?.time || '20:30',
+    time: reception?.time || '15:00',
     name: 'Κτήμα 28',
-    address: 'Αφίδνες, Αττική',
-    mapQuery: reception?.mapQuery || 'https://maps.google.com/?q=Ktima+28+Afidnes',
-    embedUrl: reception?.embedUrl || 'https://maps.google.com/maps?q=Ktima%2028%20Afidnes&t=&z=15&ie=UTF8&iwloc=&output=embed',
+    address: 'Καπανδρίτι, Αττική',
+    // Universal Google Maps Directions URL
+    mapQuery: reception?.mapQuery || 'https://maps.google.com/?daddr=Κτήμα+28+Καπανδρίτι',
+    embedUrl: reception?.embedUrl || 'https://maps.google.com/maps?q=Ktima+28+Kapandriti&t=&z=15&ie=UTF8&iwloc=&output=embed',
   };
 
   return (
@@ -68,10 +70,9 @@ export const Locations: React.FC<LocationsProps> = ({ ceremony, reception }) => 
 
           <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-0.5">
-              <h4 className="font-didot text-lg font-semibold text-[#0c1b33]">
+              <h4 className="font-didot text-lg font-semibold text-[#0c1b33] whitespace-pre-line leading-snug">
                 {ceremonyData.name}
               </h4>
-              {/* Διεύθυνση σε ανοιχτό μπλε (#4a729c) */}
               <p className="font-sans text-xs text-[#4a729c] flex items-center gap-1 font-medium">
                 <MapPin className="w-3.5 h-3.5 text-[#4a729c]" />
                 {ceremonyData.address}
@@ -125,7 +126,6 @@ export const Locations: React.FC<LocationsProps> = ({ ceremony, reception }) => 
               <h4 className="font-didot text-lg font-semibold text-[#0c1b33]">
                 {receptionData.name}
               </h4>
-              {/* Διεύθυνση σε ανοιχτό μπλε (#4a729c) */}
               <p className="font-sans text-xs text-[#4a729c] flex items-center gap-1 font-medium">
                 <MapPin className="w-3.5 h-3.5 text-[#4a729c]" />
                 {receptionData.address}
@@ -136,7 +136,7 @@ export const Locations: React.FC<LocationsProps> = ({ ceremony, reception }) => 
               href={receptionData.mapQuery}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 bg-[#0c1b33] hover:bg-[#183059] text-white px-5 py-2.5 rounded-xl text-xs font-didot tracking-widest uppercase transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 bg-[#0c1b33] hover:bg-[#183059] text-white px-5 py-2.5 rounded-xl text-xs font-didot tracking-widest uppercase transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 cursor-pointer"
             >
               <Navigation className="w-3.5 h-3.5 text-[#fcfbf9]" />
               Πλοηγηση

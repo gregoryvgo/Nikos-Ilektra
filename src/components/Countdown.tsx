@@ -105,7 +105,7 @@ export const Countdown: React.FC<CountdownProps> = ({ targetDate, formattedDate 
             <div className="w-8 h-px bg-[#0c1b33]/25" />
           </div>
 
-          <p className="font-didot text-xs text-[#0c1b33] tracking-widest uppercase pt-1 font-medium">
+          <p className="font-didot text-sm sm:text-base text-[#0c1b33] tracking-widest uppercase pt-1 font-medium">
             {formattedDate}
           </p>
         </div>
@@ -154,6 +154,21 @@ export const Countdown: React.FC<CountdownProps> = ({ targetDate, formattedDate 
               <span>Apple / Outlook</span>
             </button>
           </div>
+        </div>
+
+        {/* Επιπλέον Κείμενα */}
+        <div className="space-y-3 pt-3">
+          <p className="font-bodoni italic text-base sm:text-lg text-[#0c1b33] leading-relaxed">
+            Παρακαλούμε επιβεβαιώστε την παρουσία σας <br />
+            έως τις{' '}
+            <strong className="font-semibold not-italic text-[#4a729c] whitespace-nowrap">
+              10/12/2026
+            </strong>
+            .
+          </p>
+          <p className="font-bodoni italic font-semibold text-xl sm:text-2xl text-[#4a729c]">
+            Θα χαρούμε πολύ να σας δούμε!
+          </p>
         </div>
 
       </div>

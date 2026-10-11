@@ -9,14 +9,27 @@ interface GiftRegistryProps {
 
 export const GiftRegistry: React.FC<GiftRegistryProps> = ({
   bankName = 'Τράπεζα Πειραιώς',
-  iban = 'GR00022211155522223333333664512',
+  iban = 'GR2301727090005709119954638',
   beneficiary = 'Νίκος & Ηλέκτρα',
 }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(iban);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(iban);
+      } else {
+        // Fallback μέθοδος για παλαιότερους browsers ή μη ασφαλή contexts
+        const textArea = document.createElement('textarea');
+        textArea.value = iban;
+        textArea.style.position = 'fixed'; // Αποφυγή scroll
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch (err) {
@@ -29,12 +42,10 @@ export const GiftRegistry: React.FC<GiftRegistryProps> = ({
       <div className="max-w-sm mx-auto space-y-6">
         {/* Header */}
         <div className="space-y-2">
-          {/* 1. "Λίστα Γάμου" σε ανοιχτό μπλε (#4a729c) */}
           <p className="font-didot text-xs tracking-[0.35em] text-[#4a729c] font-semibold uppercase">
             Λιστα Γαμου
           </p>
 
-          {/* Τίτλος σε Navy Blue */}
           <h2 className="font-bodoni italic text-3xl sm:text-4xl text-[#0c1b33] font-normal tracking-wide">
             Προαιρετική Συνεισφορά
           </h2>
@@ -46,7 +57,6 @@ export const GiftRegistry: React.FC<GiftRegistryProps> = ({
           </div>
         </div>
 
-        {/* 2. Επεξηγηματικό κείμενο σε σκούρο μπλε (#0c1b33) */}
         <p className="font-sans text-xs text-[#0c1b33]/85 font-normal leading-relaxed px-4">
           Η παρουσία σας είναι το ομορφότερο δώρο για εμάς. Εάν ωστόσο επιθυμείτε να
           συμβάλετε στο ξεκίνημα της νέας μας ζωής:
@@ -58,7 +68,6 @@ export const GiftRegistry: React.FC<GiftRegistryProps> = ({
             <span className="font-didot text-sm tracking-widest text-[#0c1b33] uppercase font-semibold block">
               {bankName}
             </span>
-            {/* 3. "Δικαιούχοι: Νίκος & Ηλέκτρα" σε ανοιχτό μπλε (#4a729c) χωρίς bold */}
             <p className="font-sans text-xs text-[#4a729c] font-normal">
               Δικαιούχοι: <span className="font-normal text-[#4a729c]">{beneficiary}</span>
             </p>
@@ -66,13 +75,12 @@ export const GiftRegistry: React.FC<GiftRegistryProps> = ({
 
           {/* IBAN Box */}
           <div className="bg-[#f3f7fb] p-3.5 rounded-xl border border-[#dce8f2]">
-            {/* 4. IBAN σε σκούρο μπλε (#0c1b33) */}
             <p className="font-mono text-xs sm:text-[13px] tracking-wider text-[#0c1b33] break-all select-all font-medium">
               {iban}
             </p>
           </div>
 
-          {/* 5. Κουμπί "Αντιγραφή IBAN" */}
+          {/* Κουμπί "Αντιγραφή IBAN" */}
           <button
             type="button"
             onClick={handleCopy}

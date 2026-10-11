@@ -1,36 +1,42 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface VideoEnvelopeProps {
-  groom: string;
-  bride: string;
-  date: string;
+  groom?: string;
+  bride?: string;
+  date?: string;
   churchName?: string;
   imageSrc?: string;
   videoSrc?: string;
 }
 
 export const VideoEnvelope: React.FC<VideoEnvelopeProps> = ({
-  groom,
-  bride,
-  date,
-  churchName = 'Ι.Ν. Εσταυρωμένου',
-  imageSrc = '/invitation.png',
+  groom = 'Νίκος',
+  bride = 'Ηλέκτρα',
+  imageSrc = '/images/nikos-proskitirio.png',
   videoSrc = '/Wedding_invitation_envelope_opens_1080p_202608172336.mp4',
 }) => {
   const [isOpened, setIsOpened] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  useEffect(() => {
+  // Ρύθμιση ταχύτητας 1.65x μόλις φορτώσει το βίντεο
+  const handleLoadedMetadata = () => {
     if (videoRef.current) {
+      videoRef.current.playbackRate = 1.65;
       videoRef.current.play().catch(() => {});
     }
-  }, []);
+  };
 
-  const handleVideoEnded = () => {
-    setIsOpened(true);
+  // Εμφάνιση της εικόνας 1.6 δευτερόλεπτα πριν τελειώσει το βίντεο
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      const timeLeft = videoRef.current.duration - videoRef.current.currentTime;
+      if (timeLeft <= 1.6 && !isOpened) {
+        setIsOpened(true);
+      }
+    }
   };
 
   return (
@@ -46,61 +52,40 @@ export const VideoEnvelope: React.FC<VideoEnvelopeProps> = ({
           autoPlay
           playsInline
           muted
-          onEnded={handleVideoEnded}
+          onLoadedMetadata={handleLoadedMetadata}
+          onTimeUpdate={handleTimeUpdate}
           className="absolute inset-0 w-full h-full object-cover"
         />
 
-        {/* Εμφάνιση Κειμένων & Ονομάτων */}
+        {/* Εμφάνιση Προσκλητηρίου - Ομαλό Animation χωρίς απότομο φόντο */}
         <AnimatePresence>
           {isOpened && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
+              initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.2, ease: 'easeOut' }}
-              className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center"
+              transition={{ duration: 2.2, ease: [0.22, 1, 0.36, 1] }}
+              className="relative z-20 w-full h-full flex flex-col items-center justify-center p-4"
             >
-              {/* Ονόματα από το PNG */}
-              <div className="w-64 h-44 flex items-center justify-center mt-6">
+              {/* Εικόνα προσκλητηρίου ενσωματωμένη φυσικά πάνω στο τελικό κάδρο του βίντεο */}
+              <div className="w-full h-full max-h-[88dvh] flex items-center justify-center">
                 <img
                   src={imageSrc}
                   alt={`${groom} & ${bride}`}
-                  className="w-full h-full object-contain mix-blend-multiply opacity-90 scale-105"
+                  className="w-full h-full max-w-full max-h-full object-contain drop-shadow-xl"
                 />
               </div>
-
-              {/* Εκκλησία */}
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-                className="font-bodoni italic text-sm text-[#0c1b33]/80 mt-2"
-              >
-                {churchName}
-              </motion.p>
-
-              {/* Ημερομηνία σε ενιαία γραμμή (whitespace-nowrap) */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.8 }}
-                className="mt-4 pt-3 border-t border-[#0c1b33]/15 w-64 text-center"
-              >
-                <p className="font-didot text-sm font-semibold tracking-widest text-[#0c1b33] whitespace-nowrap">
-                  {date}
-                </p>
-              </motion.div>
 
               {/* Scroll Down Indicator */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.7 }}
-                transition={{ delay: 1.2, duration: 0.8 }}
-                className="absolute bottom-6 flex flex-col items-center cursor-pointer"
+                transition={{ delay: 1.0, duration: 0.8 }}
+                className="absolute bottom-3 flex flex-col items-center cursor-pointer"
               >
-                <span className="font-sans text-[9px] tracking-[0.2em] uppercase text-[#0c1b33] mb-1 font-medium">
+                <span className="font-sans text-[9px] tracking-[0.2em] uppercase text-[#0c1b33] mb-0.5 font-medium">
                   Scroll
                 </span>
-                <div className="w-px h-6 bg-gradient-to-b from-[#0c1b33] to-transparent animate-bounce" />
+                <div className="w-px h-4 bg-gradient-to-b from-[#0c1b33] to-transparent animate-bounce" />
               </motion.div>
             </motion.div>
           )}

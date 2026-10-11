@@ -31,9 +31,9 @@ export interface EventData {
   crew: Array<{
     name: string;
     role: string;
-    quote: string;
-    phone: string;
-    image: string;
+    quote?: string;
+    phone?: string;
+    image?: string;
   }>;
   bankAccount: {
     bankName: string;
@@ -54,18 +54,18 @@ export const eventData: EventData = {
   locations: {
     ceremony: {
       title: "Το Μυστήριο",
-      time: "12:00",
-      name: "Πλατεία Εσταυρωμένου",
+      time: "12:30",
+      name: "Ιερός Ναός Υψώσεως Τιμίου Σταυρού\n(Εσταυρωμένος)",
       address: "Αιγάλεω, Αττική",
-      mapQuery: "https://www.google.com/maps/search/?api=1&query=%CE%A0%CE%BB%CE%B1%CF%84%CE%B5%CE%AF%CE%B1+%CE%95%CF%83%CF%84%CE%B1%CF%85%CF%81%CF%89%CE%BC%CE%AD%CE%BD%CE%BF%CF%85+%CE%91%CE%B9%CE%B3%CE%AC%CE%BB%CE%B5%CF%89",
+      mapQuery: "https://www.google.com/maps/dir/?api=1&destination=Ieros+Naos+Ypsoseos+Timiou+Stavrou+Aigaleo",
       embedUrl: "https://maps.google.com/maps?q=Plateia+Estavromenou+Aigaleo&t=&z=15&ie=UTF8&iwloc=&output=embed",
     },
     reception: {
       title: "Η Δεξίωση",
-      time: "14:00",
+      time: "15:00",
       name: "Κτήμα 28",
       address: "Καπανδρίτι, Αττική",
-      mapQuery: "https://www.google.com/maps/search/?api=1&query=%CE%9A%CF%84%CE%AE%CE%BC%CE%B1+28+%CE%9A%CE%B1%CF%80%CE%B1%CE%BD%CE%B4%CF%81%CE%AF%CF%84%CE%B9",
+      mapQuery: "https://www.google.com/maps/dir/?api=1&destination=Ktima+28+Kapandriti",
       embedUrl: "https://maps.google.com/maps?q=Ktima+28+Kapandriti&t=&z=15&ie=UTF8&iwloc=&output=embed",
     },
   },
@@ -77,35 +77,23 @@ export const eventData: EventData = {
     {
       name: "Νίκος",
       role: "Γαμπρός",
-      quote: "Ελπίζω να μην περιμένω πολύ τη νύφη!",
-      phone: "+306937000000",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&fit=crop&q=80",
+      phone: "+306948057742",
+      image: "/images/FB_IMG_1717614596508.jpg",
     },
     {
       name: "Ηλέκτρα",
       role: "Νύφη",
-      quote: "Εάν το σκάσω και δεν εμφανιστώ, θα με βρείτε στα παρακάτω στοιχεία!",
-      phone: "+306937111200",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&fit=crop&q=80",
+      phone: "+306907367525",
+      image: "/images/IMG-0d5e919d4f1c95d7cd513e38892b23d0-V.jpg",
     },
     {
-      name: "Νικόλας",
-      role: "Κουμπάρος",
-      quote: "Καθόμασταν στο ίδιο θρανίο και φανταζόμασταν αυτή τη στιγμή!",
-      phone: "+306937007007",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&fit=crop&q=80",
-    },
-    {
-      name: "Καλλιόπη",
-      role: "Κουμπάρα",
-      quote: "Επιτέλους θα σε ξυρίσω φίλε, δεν θα μείνει τρίχα!",
-      phone: "+306937008008",
-      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&fit=crop&q=80",
+      name: "Νικόλας Μπιλάλης\nΒασίλης & Καλλιόπη Παπαδημητρίου",
+      role: "Κουμπάροι",
     },
   ],
   bankAccount: {
     bankName: "Τράπεζα Πειραιώς",
-    iban: "GR00022211155522223333333664512",
+    iban: "GR2301727090005709119954638",
     beneficiary: "Νίκος & Ηλέκτρα",
   },
   rsvpDeadline: "10 Δεκεμβρίου 2026",
