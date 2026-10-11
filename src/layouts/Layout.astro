@@ -8,12 +8,13 @@ interface Props {
 }
 
 const {
-  title = 'Προσκλητήριο Γάμου',
+  title = 'Νίκος & Ηλέκτρα - Προσκλητήριο Γάμου',
   description = 'Σας προσκαλούμε να γιορτάσετε μαζί μας την πιο ξεχωριστή ημέρα της ζωής μας!',
-  image = 'https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&fit=crop&q=80',
+  image = '/images/20251117_165933 (1).jpg',
 } = Astro.props;
 
-const canonicalURL = Astro.url;
+const canonicalURL = new URL(Astro.url.pathname, 'https://nikos-ilektra.vgogenius.gr');
+const socialImageURL = new URL(image, canonicalURL).href;
 ---
 
 <!doctype html>
@@ -21,28 +22,28 @@ const canonicalURL = Astro.url;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- SEO Meta Tags -->
+    {/* SEO Meta Tags */}
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
 
-    <!-- Open Graph / Facebook / WhatsApp / Viber -->
+    {/* Open Graph / Facebook / WhatsApp / Viber */}
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={image} />
+    <meta property="og:image" content={socialImageURL} />
 
-    <!-- Twitter Preview Cards -->
+    {/* Twitter Preview Cards */}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={image} />
+    <meta name="twitter:image" content={socialImageURL} />
 
-    <!-- Google Fonts (GFS Didot, GFS Bodoni, Cormorant Garamond, Marck Script, Montserrat) -->
+    {/* Google Fonts (GFS Didot, GFS Bodoni, Cormorant Garamond, Marck Script, Montserrat) */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -53,7 +54,7 @@ const canonicalURL = Astro.url;
   <body class="bg-[#fcfaf7] text-stone-800 antialiased selection:bg-[#c5a880]/20 selection:text-[#a68a56]">
     <slot />
 
-    <!-- Observer script for scroll animations -->
+    {/* Observer script for scroll animations */}
     <script>
       const observer = new IntersectionObserver(
         (entries) => {
