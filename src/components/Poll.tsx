@@ -59,6 +59,15 @@ export const Poll: React.FC = () => {
   const [pinError, setPinError] = useState(false);
 
   useEffect(() => {
+    const saved = localStorage.getItem('wedding_poll_votes');
+    if (saved) {
+      try {
+        setUserVotes(JSON.parse(saved));
+      } catch (error) {
+        console.error('Failed to restore saved votes:', error);
+      }
+    }
+
     const fetchVotes = async () => {
       if (!supabase) return;
 
@@ -111,15 +120,6 @@ export const Poll: React.FC = () => {
           }
         )
         .subscribe();
-    }
-
-    const saved = localStorage.getItem('wedding_poll_votes');
-    if (saved) {
-      try {
-        setUserVotes(JSON.parse(saved));
-      } catch (error) {
-        console.error('Failed to restore saved votes:', error);
-      }
     }
 
     return () => {
