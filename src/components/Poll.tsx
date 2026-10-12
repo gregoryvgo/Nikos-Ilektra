@@ -1,5 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { HelpCircle, CheckCircle2 } from 'lucide-react';
+﻿import React, { useEffect, useState } from 'react';
+import { HelpCircle, CheckCircle2, Lock, ShieldCheck, X } from 'lucide-react';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
 interface PollOption {
   id: string;
@@ -18,86 +23,166 @@ const initialPolls: PollQuestion[] = [
     id: 'attendance',
     question: 'Θα μας τιμίσετε με την παρουσία σας;',
     options: [
-      { id: '1', text: 'Ναι', votes: 42 },
-      { id: '2', text: 'Όχι', votes: 12 },
+      { id: '1', text: 'Ναι', votes: 0 },
+      { id: '2', text: 'Όχι', votes: 0 },
     ],
   },
   {
     id: 'honeymoon',
     question: 'Πού θα πάμε μήνα του μέλιτος;',
     options: [
-      { id: '1', text: 'Μαδαγασκάρη', votes: 18 },
-      { id: '2', text: 'Μπαλί', votes: 25 },
-      { id: '3', text: 'Βιέννη-Πράγα', votes: 15 },
-      { id: '4', text: 'Κυψέλη', votes: 31 },
+      { id: '1', text: 'Μαδαγασκάρη', votes: 0 },
+      { id: '2', text: 'Μπαλί', votes: 0 },
+      { id: '3', text: 'Βιέννη-Πράγα', votes: 0 },
+      { id: '4', text: 'Κυψέλη', votes: 0 },
     ],
   },
   {
     id: 'bride_late',
     question: 'Πόση ώρα θα αργήσει η νύφη;',
     options: [
-      { id: '1', text: '10 λεπτά', votes: 14 },
-      { id: '2', text: '1 ώρα', votes: 28 },
-      { id: '3', text: 'ΚΑΘΟΛΟΥ', votes: 19 },
+      { id: '1', text: '10 λεπτά', votes: 0 },
+      { id: '2', text: '1 ώρα', votes: 0 },
+      { id: '3', text: 'ΚΑΘΟΛΟΥ', votes: 0 },
     ],
   },
 ];
 
+const ADMIN_PIN = '1001';
+
 export const Poll: React.FC = () => {
   const [polls, setPolls] = useState<PollQuestion[]>(initialPolls);
   const [userVotes, setUserVotes] = useState<Record<string, string>>({});
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [pinInput, setPinInput] = useState('');
+  const [pinError, setPinError] = useState(false);
 
   useEffect(() => {
+    const fetchVotes = async () => {
+      if (!supabase) {
+        return;
+      }
+
+      const { data, error } = await supabase.from('poll_votes').select('*');
+      if (error) {
+        console.error('Failed to load poll votes:', error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        setPolls((prev) =>
+          prev.map((poll) => {
+            const pollOptions = poll.options.map((opt) => {
+              const found = data.find(
+                (d) => d.poll_id === poll.id && d.option_id === opt.id
+              );
+              return found ? { ...opt, votes: found.votes } : opt;
+            });
+            return { ...poll, options: pollOptions };
+          })
+        );
+      }
+    };
+
+    void fetchVotes();
+
+    let subscription = null;
+
+    if (supabase) {
+      subscription = supabase
+        .channel('public:poll_votes')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'poll_votes' },
+          (payload) => {
+            const updated = payload.new as { poll_id: string; option_id: string; votes: number } | null;
+            if (!updated) return;
+
+            setPolls((prev) =>
+              prev.map((poll) => {
+                if (poll.id !== updated.poll_id) return poll;
+                return {
+                  ...poll,
+                  options: poll.options.map((opt) =>
+                    opt.id === updated.option_id ? { ...opt, votes: updated.votes } : opt
+                  ),
+                };
+              })
+            );
+          }
+        )
+        .subscribe();
+    }
+
     const saved = localStorage.getItem('wedding_poll_votes');
     if (saved) {
       try {
         setUserVotes(JSON.parse(saved));
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        console.error('Failed to restore saved votes:', error);
       }
     }
+
+    return () => {
+      if (subscription && supabase) {
+        supabase.removeChannel(subscription);
+      }
+    };
   }, []);
 
-  const handleVote = (poll: PollQuestion, option: PollOption) => {
+  const handleVote = async (poll: PollQuestion, option: PollOption) => {
+    if (!supabase) {
+      return;
+    }
+
     const previousOptionId = userVotes[poll.id];
     if (previousOptionId === option.id) return;
 
-    const updatedVotes = { ...userVotes, [poll.id]: option.id };
-    setUserVotes(updatedVotes);
-    localStorage.setItem('wedding_poll_votes', JSON.stringify(updatedVotes));
+    const updatedVotesMap = { ...userVotes, [poll.id]: option.id };
+    setUserVotes(updatedVotesMap);
+    localStorage.setItem('wedding_poll_votes', JSON.stringify(updatedVotesMap));
 
-    setPolls((prev) =>
-      prev.map((p) => {
-        if (p.id !== poll.id) return p;
-        return {
-          ...p,
-          options: p.options.map((opt) => {
-            if (opt.id === option.id) return { ...opt, votes: opt.votes + 1 };
-            if (opt.id === previousOptionId) return { ...opt, votes: Math.max(0, opt.votes - 1) };
-            return opt;
-          }),
-        };
-      })
-    );
+    for (const opt of poll.options) {
+      let newVoteCount = opt.votes;
+      if (opt.id === option.id) newVoteCount += 1;
+      if (opt.id === previousOptionId) newVoteCount = Math.max(0, newVoteCount - 1);
+
+      const { error } = await supabase.from('poll_votes').upsert(
+        { poll_id: poll.id, option_id: opt.id, votes: newVoteCount },
+        { onConflict: 'poll_id,option_id' }
+      );
+
+      if (error) {
+        console.error('Vote update failed:', error);
+      }
+    }
+  };
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pinInput === ADMIN_PIN) {
+      setIsAuthenticated(true);
+      setPinError(false);
+      setPinInput('');
+    } else {
+      setPinError(true);
+    }
   };
 
   const getTotalVotes = (options: PollOption[]) =>
     options.reduce((sum, opt) => sum + opt.votes, 0);
 
   return (
-    <div className="fade-in-section py-16 px-6 bg-white text-center border-t border-[#dce8f2]">
+    <div className="fade-in-section py-16 px-6 bg-white text-center border-t border-[#dce8f2] relative">
       <div className="max-w-sm mx-auto space-y-8">
         <div className="space-y-2">
-          {/* Fun Zone σε ανοιχτό μπλε (#4a729c) */}
           <p className="font-didot text-xs tracking-[0.35em] text-[#4a729c] font-semibold uppercase">
             Fun Zone
           </p>
-
-          {/* Δημοσκόπηση σε σκούρο μπλε (#0c1b33) */}
           <h2 className="font-bodoni italic text-3xl sm:text-4xl text-[#0c1b33] font-normal tracking-wide">
             Δημοσκόπηση
           </h2>
-
           <div className="flex items-center justify-center gap-2 pt-1">
             <div className="w-8 h-px bg-[#0c1b33]/25" />
             <HelpCircle className="w-3.5 h-3.5 text-[#4a729c]" />
@@ -112,7 +197,6 @@ export const Poll: React.FC = () => {
             const totalVotes = getTotalVotes(poll.options);
 
             return (
-              /* Καρτέλα σε ανοιχτό μπλε (#f3f7fb) */
               <div
                 key={poll.id}
                 className="bg-[#f3f7fb] p-5 rounded-2xl border border-[#dce8f2] shadow-[0_4px_20px_rgba(12,27,51,0.03)] space-y-4"
@@ -159,7 +243,6 @@ export const Poll: React.FC = () => {
                           </div>
 
                           {hasVoted && (
-                            /* Ποσοστά σε σκούρο μπλε (#0c1b33) */
                             <span className="font-mono text-xs font-semibold text-[#0c1b33] shrink-0">
                               {percentage}%
                             </span>
@@ -179,7 +262,128 @@ export const Poll: React.FC = () => {
             );
           })}
         </div>
+
+        <div className="pt-6 border-t border-[#dce8f2]/50 flex justify-center">
+          <button
+            onClick={() => setIsAdminOpen(true)}
+            className="flex items-center gap-1.5 text-[11px] font-sans text-[#4a729c]/70 hover:text-[#4a729c] transition-colors cursor-pointer"
+          >
+            <Lock className="w-3 h-3" />
+            <span>Admin Dashboard</span>
+          </button>
+        </div>
       </div>
+
+      {isAdminOpen && (
+        <div className="fixed inset-0 bg-[#0c1b33]/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 text-left shadow-2xl border border-[#dce8f2] relative space-y-6">
+            <button
+              onClick={() => {
+                setIsAdminOpen(false);
+                setPinError(false);
+                setPinInput('');
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-[#0c1b33]"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {!isAuthenticated ? (
+              <form onSubmit={handleLogin} className="space-y-4 py-4">
+                <div className="space-y-1">
+                  <h3 className="font-bodoni text-xl font-medium text-[#0c1b33]">
+                    Είσοδος Διαχειριστή
+                  </h3>
+                  <p className="font-sans text-xs text-gray-500">
+                    Εισάγετε τον τετραψήφιο κωδικό PIN για να δείτε τα συγκεντρωτικά στατιστικά.
+                  </p>
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    maxLength={4}
+                    value={pinInput}
+                    onChange={(e) => setPinInput(e.target.value)}
+                    placeholder="PIN"
+                    className="w-full px-4 py-2 border border-[#dce8f2] rounded-xl text-center font-mono tracking-widest text-lg focus:outline-none focus:border-[#4a729c]"
+                    autoFocus
+                  />
+                  {pinError && (
+                    <p className="text-red-500 text-xs mt-1.5 text-center">Λανθασμένος κωδικός PIN.</p>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-[#0c1b33] text-white py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase hover:bg-[#4a729c] transition-colors cursor-pointer"
+                >
+                  Είσοδος
+                </button>
+              </form>
+            ) : (
+              <div className="space-y-6 max-h-[80vh] overflow-y-auto pr-1">
+                <div className="flex items-center justify-between border-b pb-3 border-[#dce8f2]">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="w-5 h-5 text-[#4a729c]" />
+                    <h3 className="font-bodoni text-xl font-medium text-[#0c1b33]">
+                      Συγκεντρωτικά Στατιστικά
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setIsAuthenticated(false)}
+                    className="text-xs text-red-500 hover:underline font-medium"
+                  >
+                    Έξοδος
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {polls.map((poll) => {
+                    const totalVotes = getTotalVotes(poll.options);
+                    return (
+                      <div key={poll.id} className="bg-[#f3f7fb] p-4 rounded-xl border border-[#dce8f2] space-y-3">
+                        <h4 className="font-bodoni text-sm font-medium text-[#0c1b33]">
+                          {poll.question}
+                        </h4>
+                        <div className="space-y-2">
+                          {poll.options.map((opt) => {
+                            const percentage = totalVotes > 0 ? Math.round((opt.votes / totalVotes) * 100) : 0;
+                            return (
+                              <div key={opt.id} className="text-xs space-y-1">
+                                <div className="flex justify-between font-sans text-[#0c1b33]">
+                                  <span className="font-medium">{opt.text}</span>
+                                  <span className="font-mono font-semibold">
+                                    {opt.votes} ψήφοι ({percentage}%)
+                                  </span>
+                                </div>
+                                <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                                  <div
+                                    className="bg-[#4a729c] h-full transition-all duration-500"
+                                    style={{ width: `${percentage}%` }}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <p className="text-[11px] text-right text-gray-500 font-sans pt-1">
+                          Συνολικές ψήφοι ερώτησης: <strong className="text-[#0c1b33]">{totalVotes}</strong>
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={() => setIsAdminOpen(false)}
+                  className="w-full bg-[#4a729c] text-white py-2 rounded-xl text-xs font-semibold tracking-wider uppercase hover:bg-[#0c1b33] transition-colors cursor-pointer"
+                >
+                  Κλείσιμο
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

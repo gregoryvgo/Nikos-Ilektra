@@ -21,11 +21,10 @@ export const VideoEnvelope: React.FC<VideoEnvelopeProps> = ({
   const [isOpened, setIsOpened] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Ρύθμιση ταχύτητας 1.65x μόλις φορτώσει το βίντεο
-  const handleLoadedMetadata = () => {
+  // Ρύθμιση ταχύτητας 1.65x (μπορείς να το αλλάξεις π.χ. σε 2.0 ή 2.5 αν το θέλεις πιο γρήγορο)
+  const handlePlayOrLoad = () => {
     if (videoRef.current) {
       videoRef.current.playbackRate = 1.65;
-      videoRef.current.play().catch(() => {});
     }
   };
 
@@ -33,7 +32,7 @@ export const VideoEnvelope: React.FC<VideoEnvelopeProps> = ({
   const handleTimeUpdate = () => {
     if (videoRef.current) {
       const timeLeft = videoRef.current.duration - videoRef.current.currentTime;
-      if (timeLeft <= 1.6 && !isOpened) {
+      if (timeLeft <= 1.0 && !isOpened) {
         setIsOpened(true);
       }
     }
@@ -52,7 +51,8 @@ export const VideoEnvelope: React.FC<VideoEnvelopeProps> = ({
           autoPlay
           playsInline
           muted
-          onLoadedMetadata={handleLoadedMetadata}
+          onPlay={handlePlayOrLoad}
+          onLoadedMetadata={handlePlayOrLoad}
           onTimeUpdate={handleTimeUpdate}
           className="absolute inset-0 w-full h-full object-cover"
         />
