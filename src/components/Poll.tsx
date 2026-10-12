@@ -59,67 +59,70 @@ export const Poll: React.FC = () => {
   const [pinError, setPinError] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem('wedding_poll_votes');
-    if (saved) {
+    // Φόρτωση ψήφων χρήστη από το localStorage
+    const savedVotes = localStorage.getItem('wedding_poll_votes');
+    if (savedVotes) {
       try {
-        setUserVotes(JSON.parse(saved));
-      } catch (error) {
-        console.error('Failed to restore saved votes:', error);
+        setUserVotes(JSON.parse(savedVotes));
+      } catch (e) {
+        console.error(e);
       }
     }
 
+    // Φόρτωση από Supabase (αν υπάρχει)
     const fetchVotes = async () => {
       if (!supabase) return;
-
-      const { data, error } = await supabase.from('poll_votes').select('*');
-      if (error) {
-        console.error('Failed to load poll votes:', error);
-        return;
-      }
-
-      if (data && data.length > 0) {
-        setPolls((prev) =>
-          prev.map((poll) => {
-            const pollOptions = poll.options.map((opt) => {
-              const found = data.find(
-                (d) => d.poll_id === poll.id && d.option_id === opt.id
-              );
-              return found ? { ...opt, votes: found.votes } : opt;
-            });
-            return { ...poll, options: pollOptions };
-          })
-        );
+      try {
+        const { data, error } = await supabase.from('poll_votes').select('*');
+        if (!error && data && data.length > 0) {
+          setPolls((prev) =>
+            prev.map((poll) => {
+              const pollOptions = poll.options.map((opt) => {
+                const found = data.find(
+                  (d) => d.poll_id === poll.id && d.option_id === opt.id
+                );
+                return found ? { ...opt, votes: found.votes } : opt;
+              });
+              return { ...poll, options: pollOptions };
+            })
+          );
+        }
+      } catch (err) {
+        console.error('Supabase fetch error:', err);
       }
     };
 
     void fetchVotes();
 
     let subscription: any = null;
-
     if (supabase) {
-      subscription = supabase
-        .channel('public:poll_votes')
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'poll_votes' },
-          (payload) => {
-            const updated = payload.new as { poll_id: string; option_id: string; votes: number } | null;
-            if (!updated) return;
+      try {
+        subscription = supabase
+          .channel('public:poll_votes')
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'poll_votes' },
+            (payload) => {
+              const updated = payload.new as { poll_id: string; option_id: string; votes: number } | null;
+              if (!updated) return;
 
-            setPolls((prev) =>
-              prev.map((poll) => {
-                if (poll.id !== updated.poll_id) return poll;
-                return {
-                  ...poll,
-                  options: poll.options.map((opt) =>
-                    opt.id === updated.option_id ? { ...opt, votes: updated.votes } : opt
-                  ),
-                };
-              })
-            );
-          }
-        )
-        .subscribe();
+              setPolls((prev) =>
+                prev.map((poll) => {
+                  if (poll.id !== updated.poll_id) return poll;
+                  return {
+                    ...poll,
+                    options: poll.options.map((opt) =>
+                      opt.id === updated.option_id ? { ...opt, votes: updated.votes } : opt
+                    ),
+                  };
+                })
+              );
+            }
+          )
+          .subscribe();
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     return () => {
@@ -130,27 +133,44 @@ export const Poll: React.FC = () => {
   }, []);
 
   const handleVote = async (poll: PollQuestion, option: PollOption) => {
-    if (!supabase) return;
-
     const previousOptionId = userVotes[poll.id];
     if (previousOptionId === option.id) return;
 
+    // Ενημέρωση τοπικά αμέσως (για να αντιδράει instant στο κλικ του χρήστη)
     const updatedVotesMap = { ...userVotes, [poll.id]: option.id };
     setUserVotes(updatedVotesMap);
     localStorage.setItem('wedding_poll_votes', JSON.stringify(updatedVotesMap));
 
-    for (const opt of poll.options) {
-      let newVoteCount = opt.votes;
-      if (opt.id === option.id) newVoteCount += 1;
-      if (opt.id === previousOptionId) newVoteCount = Math.max(0, newVoteCount - 1);
+    setPolls((prev) =>
+      prev.map((p) => {
+        if (p.id !== poll.id) return p;
+        return {
+          ...p,
+          options: p.options.map((opt) => {
+            let v = opt.votes;
+            if (opt.id === option.id) v += 1;
+            if (opt.id === previousOptionId) v = Math.max(0, v - 1);
+            return { ...opt, votes: v };
+          }),
+        };
+      })
+    );
 
-      const { error } = await supabase.from('poll_votes').upsert(
-        { poll_id: poll.id, option_id: opt.id, votes: newVoteCount },
-        { onConflict: 'poll_id,option_id' }
-      );
+    // Αποστολή στη Supabase (στο παρασκήνιο)
+    if (supabase) {
+      try {
+        for (const opt of poll.options) {
+          let newVoteCount = opt.votes;
+          if (opt.id === option.id) newVoteCount += 1;
+          if (opt.id === previousOptionId) newVoteCount = Math.max(0, newVoteCount - 1);
 
-      if (error) {
-        console.error('Vote update failed:', error);
+          await supabase.from('poll_votes').upsert(
+            { poll_id: poll.id, option_id: opt.id, votes: newVoteCount },
+            { onConflict: 'poll_id,option_id' }
+          );
+        }
+      } catch (error) {
+        console.error('Failed to sync vote with Supabase:', error);
       }
     }
   };
