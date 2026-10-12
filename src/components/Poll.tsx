@@ -60,9 +60,7 @@ export const Poll: React.FC = () => {
 
   useEffect(() => {
     const fetchVotes = async () => {
-      if (!supabase) {
-        return;
-      }
+      if (!supabase) return;
 
       const { data, error } = await supabase.from('poll_votes').select('*');
       if (error) {
@@ -87,7 +85,7 @@ export const Poll: React.FC = () => {
 
     void fetchVotes();
 
-    let subscription = null;
+    let subscription: any = null;
 
     if (supabase) {
       subscription = supabase
@@ -132,9 +130,7 @@ export const Poll: React.FC = () => {
   }, []);
 
   const handleVote = async (poll: PollQuestion, option: PollOption) => {
-    if (!supabase) {
-      return;
-    }
+    if (!supabase) return;
 
     const previousOptionId = userVotes[poll.id];
     if (previousOptionId === option.id) return;
@@ -214,6 +210,7 @@ export const Poll: React.FC = () => {
                     return (
                       <button
                         key={option.id}
+                        type="button"
                         onClick={() => handleVote(poll, option)}
                         className={`w-full relative overflow-hidden rounded-xl border p-3 text-left transition-all duration-300 ${
                           hasVoted
@@ -265,6 +262,7 @@ export const Poll: React.FC = () => {
 
         <div className="pt-6 border-t border-[#dce8f2]/50 flex justify-center">
           <button
+            type="button"
             onClick={() => setIsAdminOpen(true)}
             className="flex items-center gap-1.5 text-[11px] font-sans text-[#4a729c]/70 hover:text-[#4a729c] transition-colors cursor-pointer"
           >
@@ -278,6 +276,7 @@ export const Poll: React.FC = () => {
         <div className="fixed inset-0 bg-[#0c1b33]/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 text-left shadow-2xl border border-[#dce8f2] relative space-y-6">
             <button
+              type="button"
               onClick={() => {
                 setIsAdminOpen(false);
                 setPinError(false);
@@ -329,6 +328,7 @@ export const Poll: React.FC = () => {
                     </h3>
                   </div>
                   <button
+                    type="button"
                     onClick={() => setIsAuthenticated(false)}
                     className="text-xs text-red-500 hover:underline font-medium"
                   >
@@ -374,6 +374,7 @@ export const Poll: React.FC = () => {
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => setIsAdminOpen(false)}
                   className="w-full bg-[#4a729c] text-white py-2 rounded-xl text-xs font-semibold tracking-wider uppercase hover:bg-[#0c1b33] transition-colors cursor-pointer"
                 >
