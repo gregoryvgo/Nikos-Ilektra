@@ -21,7 +21,7 @@ interface PollQuestion {
 const initialPolls: PollQuestion[] = [
   {
     id: 'attendance',
-    question: 'Θα μας τιμίσετε με την παρουσία σας;',
+    question: 'Θα μας τιμήσετε με την παρουσία σας;',
     options: [
       { id: '1', text: 'Ναι', votes: 0 },
       { id: '2', text: 'Όχι', votes: 0 },
@@ -53,23 +53,24 @@ const ADMIN_PIN = '1001';
 export const Poll: React.FC = () => {
   const [polls, setPolls] = useState<PollQuestion[]>(initialPolls);
   const [userVotes, setUserVotes] = useState<Record<string, string>>({});
+  const [mounted, setMounted] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
 
   useEffect(() => {
-    // Φόρτωση ψήφων χρήστη από το localStorage
-    const savedVotes = localStorage.getItem('wedding_poll_votes');
+    setMounted(true);
+
+    const savedVotes = window.localStorage.getItem('wedding_poll_votes');
     if (savedVotes) {
       try {
         setUserVotes(JSON.parse(savedVotes));
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        console.error(error);
       }
     }
 
-    // Φόρτωση από Supabase (αν υπάρχει)
     const fetchVotes = async () => {
       if (!supabase) return;
       try {
@@ -94,7 +95,7 @@ export const Poll: React.FC = () => {
 
     void fetchVotes();
 
-    let subscription: any = null;
+    let subscription: ReturnType<typeof supabase.on> | null = null;
     if (supabase) {
       try {
         subscription = supabase
@@ -120,8 +121,8 @@ export const Poll: React.FC = () => {
             }
           )
           .subscribe();
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        console.error(error);
       }
     }
 
@@ -136,10 +137,9 @@ export const Poll: React.FC = () => {
     const previousOptionId = userVotes[poll.id];
     if (previousOptionId === option.id) return;
 
-    // Ενημέρωση τοπικά αμέσως (για να αντιδράει instant στο κλικ του χρήστη)
     const updatedVotesMap = { ...userVotes, [poll.id]: option.id };
     setUserVotes(updatedVotesMap);
-    localStorage.setItem('wedding_poll_votes', JSON.stringify(updatedVotesMap));
+    window.localStorage.setItem('wedding_poll_votes', JSON.stringify(updatedVotesMap));
 
     setPolls((prev) =>
       prev.map((p) => {
@@ -156,7 +156,6 @@ export const Poll: React.FC = () => {
       })
     );
 
-    // Αποστολή στη Supabase (στο παρασκήνιο)
     if (supabase) {
       try {
         for (const opt of poll.options) {
@@ -188,6 +187,10 @@ export const Poll: React.FC = () => {
 
   const getTotalVotes = (options: PollOption[]) =>
     options.reduce((sum, opt) => sum + opt.votes, 0);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="fade-in-section py-16 px-6 bg-white text-center border-t border-[#dce8f2] relative">
@@ -231,7 +234,7 @@ export const Poll: React.FC = () => {
                       <button
                         key={option.id}
                         type="button"
-                        onClick={() => handleVote(poll, option)}
+                        onClick={() => void handleVote(poll, option)}
                         className={`w-full relative overflow-hidden rounded-xl border p-3 text-left transition-all duration-300 ${
                           hasVoted
                             ? isSelected
@@ -360,7 +363,10 @@ export const Poll: React.FC = () => {
                   {polls.map((poll) => {
                     const totalVotes = getTotalVotes(poll.options);
                     return (
-                      <div key={poll.id} className="bg-[#f3f7fb] p-4 rounded-xl border border-[#dce8f2] space-y-3">
+                      <div
+                        key={poll.id}
+                        className="bg-[#f3f7fb] p-4 rounded-xl border border-[#dce8f2] space-y-3"
+                      >
                         <h4 className="font-bodoni text-sm font-medium text-[#0c1b33]">
                           {poll.question}
                         </h4>
@@ -375,9 +381,9 @@ export const Poll: React.FC = () => {
                                     {opt.votes} ψήφοι ({percentage}%)
                                   </span>
                                 </div>
-                                <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                                <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
                                   <div
-                                    className="bg-[#4a729c] h-full transition-all duration-500"
+                                    className="h-full bg-[#4a729c] rounded-full"
                                     style={{ width: `${percentage}%` }}
                                   />
                                 </div>
@@ -385,21 +391,10 @@ export const Poll: React.FC = () => {
                             );
                           })}
                         </div>
-                        <p className="text-[11px] text-right text-gray-500 font-sans pt-1">
-                          Συνολικές ψήφοι ερώτησης: <strong className="text-[#0c1b33]">{totalVotes}</strong>
-                        </p>
                       </div>
                     );
                   })}
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => setIsAdminOpen(false)}
-                  className="w-full bg-[#4a729c] text-white py-2 rounded-xl text-xs font-semibold tracking-wider uppercase hover:bg-[#0c1b33] transition-colors cursor-pointer"
-                >
-                  Κλείσιμο
-                </button>
               </div>
             )}
           </div>
