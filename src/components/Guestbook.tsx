@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { BookHeart, Send, Camera, CheckCircle2, Lock, ShieldCheck, X, Trash2 } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 
@@ -23,14 +23,16 @@ export const Guestbook: React.FC = () => {
   const [photo, setPhoto] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  // Admin states
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+
     const fetchWishes = async () => {
       if (!supabase) return;
 
@@ -63,7 +65,7 @@ export const Guestbook: React.FC = () => {
 
     void fetchWishes();
 
-    let subscription: any = null;
+    let subscription: ReturnType<typeof supabase.on> | null = null;
     if (supabase) {
       subscription = supabase
         .channel('public:guestbook_wishes')
@@ -133,7 +135,7 @@ export const Guestbook: React.FC = () => {
     setMessage('');
     setPhoto(null);
     setIsSubmitting(false);
-    setTimeout(() => setIsSuccess(false), 3000);
+    window.setTimeout(() => setIsSuccess(false), 3000);
   };
 
   const handleDeleteWish = async (id?: string) => {
@@ -156,6 +158,10 @@ export const Guestbook: React.FC = () => {
       setPinError(true);
     }
   };
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="fade-in-section py-16 px-6 bg-[#f3f7fb] text-center border-t border-[#dce8f2] relative">
@@ -268,7 +274,7 @@ export const Guestbook: React.FC = () => {
                   key={item.id || idx}
                   className="bg-white p-4 rounded-xl border border-[#dce8f2] shadow-[0_4px_16px_rgba(12,27,51,0.03)] space-y-2"
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-3">
                     <span className="font-bodoni font-medium text-[#0c1b33] text-sm tracking-wide">
                       {item.name}
                     </span>
@@ -296,7 +302,6 @@ export const Guestbook: React.FC = () => {
           </div>
         </div>
 
-        {/* Admin Dashboard Trigger */}
         <div className="pt-6 border-t border-[#dce8f2]/50 flex justify-center">
           <button
             type="button"
@@ -304,12 +309,11 @@ export const Guestbook: React.FC = () => {
             className="flex items-center gap-1.5 text-[11px] font-sans text-[#4a729c]/70 hover:text-[#4a729c] transition-colors cursor-pointer"
           >
             <Lock className="w-3 h-3" />
-            <span>Admin Dashboard (Ευχές)</span>
+            <span>Admin Dashboard</span>
           </button>
         </div>
       </div>
 
-      {/* Admin Modal */}
       {isAdminOpen && (
         <div className="fixed inset-0 bg-[#0c1b33]/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 text-left shadow-2xl border border-[#dce8f2] relative space-y-6">
@@ -332,7 +336,7 @@ export const Guestbook: React.FC = () => {
                     Είσοδος Διαχειριστή
                   </h3>
                   <p className="font-sans text-xs text-gray-500">
-                    Εισάγετε το PIN για να διαχειριστείτε το Ευχολόγιο.
+                    Εισάγετε τον τετραψήφιο κωδικό PIN για να διαχειριστείτε τις ευχές.
                   </p>
                 </div>
                 <div>
@@ -362,7 +366,7 @@ export const Guestbook: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="w-5 h-5 text-[#4a729c]" />
                     <h3 className="font-bodoni text-xl font-medium text-[#0c1b33]">
-                      Διαχείριση Ευχών ({wishes.length})
+                      Διαχείριση Ευχών
                     </h3>
                   </div>
                   <button
@@ -374,36 +378,45 @@ export const Guestbook: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="space-y-3">
-                  {wishes.map((item) => (
-                    <div
-                      key={item.id}
-                      className="bg-[#f3f7fb] p-3 rounded-xl border border-[#dce8f2] flex items-start justify-between gap-3"
-                    >
-                      <div className="space-y-1 text-xs">
-                        <p className="font-bodoni font-medium text-[#0c1b33]">{item.name}</p>
-                        <p className="font-sans text-stone-600">"{item.message}"</p>
-                        <p className="text-[10px] text-stone-400">{item.createdAt}</p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteWish(item.id)}
-                        className="text-red-400 hover:text-red-600 p-1 cursor-pointer shrink-0"
-                        title="Διαγραφή ευχής"
+                <div className="space-y-4">
+                  {wishes.length === 0 ? (
+                    <p className="text-xs text-stone-500 text-center py-4">
+                      Δεν υπάρχουν ευχές προς διαγραφή.
+                    </p>
+                  ) : (
+                    wishes.map((item) => (
+                      <div
+                        key={item.id}
+                        className="bg-[#f3f7fb] p-4 rounded-xl border border-[#dce8f2] space-y-3"
                       >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="font-bodoni text-sm text-[#0c1b33] truncate">{item.name}</p>
+                            <p className="font-sans text-[10px] text-stone-400">{item.createdAt}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => void handleDeleteWish(item.id)}
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-red-200 bg-white text-red-500 hover:bg-red-50 transition-colors"
+                            aria-label={`Delete wish from ${item.name}`}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
 
-                <button
-                  type="button"
-                  onClick={() => setIsAdminOpen(false)}
-                  className="w-full bg-[#4a729c] text-white py-2 rounded-xl text-xs font-semibold tracking-wider uppercase hover:bg-[#0c1b33] transition-colors cursor-pointer"
-                >
-                  Κλείσιμο
-                </button>
+                        <p className="font-sans text-xs text-stone-600 leading-relaxed">"{item.message}"</p>
+
+                        {item.photoUrl && (
+                          <img
+                            src={item.photoUrl}
+                            alt={`${item.name} photo`}
+                            className="w-full max-h-40 object-cover rounded-lg border border-[#dce8f2]"
+                          />
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             )}
           </div>
