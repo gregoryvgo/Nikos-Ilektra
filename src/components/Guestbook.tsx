@@ -1,10 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { BookHeart, Send, Camera, CheckCircle2, Lock, ShieldCheck, X, Trash2 } from 'lucide-react';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
+import { supabase } from '../lib/supabase';
 
 interface Wish {
   id?: string;
@@ -23,7 +19,6 @@ export const Guestbook: React.FC = () => {
   const [photo, setPhoto] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -31,8 +26,6 @@ export const Guestbook: React.FC = () => {
   const [pinError, setPinError] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-
     const fetchWishes = async () => {
       if (!supabase) return;
 
@@ -65,7 +58,7 @@ export const Guestbook: React.FC = () => {
 
     void fetchWishes();
 
-    let subscription: ReturnType<typeof supabase.on> | null = null;
+    let subscription: any = null;
     if (supabase) {
       subscription = supabase
         .channel('public:guestbook_wishes')
@@ -158,10 +151,6 @@ export const Guestbook: React.FC = () => {
       setPinError(true);
     }
   };
-
-  if (!mounted) {
-    return null;
-  }
 
   return (
     <div className="fade-in-section py-16 px-6 bg-[#f3f7fb] text-center border-t border-[#dce8f2] relative">

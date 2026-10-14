@@ -1,10 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { HelpCircle, CheckCircle2, Lock, ShieldCheck, X } from 'lucide-react';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
+import { supabase } from '../lib/supabase';
 
 interface PollOption {
   id: string;
@@ -21,7 +17,7 @@ interface PollQuestion {
 const initialPolls: PollQuestion[] = [
   {
     id: 'attendance',
-    question: 'Θα μας τιμήσετε με την παρουσία σας;',
+    question: 'Θα μας τιμίσετε με την παρουσία σας;',
     options: [
       { id: '1', text: 'Ναι', votes: 0 },
       { id: '2', text: 'Όχι', votes: 0 },
@@ -53,15 +49,12 @@ const ADMIN_PIN = '1001';
 export const Poll: React.FC = () => {
   const [polls, setPolls] = useState<PollQuestion[]>(initialPolls);
   const [userVotes, setUserVotes] = useState<Record<string, string>>({});
-  const [mounted, setMounted] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-
     const savedVotes = window.localStorage.getItem('wedding_poll_votes');
     if (savedVotes) {
       try {
@@ -95,7 +88,7 @@ export const Poll: React.FC = () => {
 
     void fetchVotes();
 
-    let subscription: ReturnType<typeof supabase.on> | null = null;
+    let subscription: any = null;
     if (supabase) {
       try {
         subscription = supabase
@@ -187,10 +180,6 @@ export const Poll: React.FC = () => {
 
   const getTotalVotes = (options: PollOption[]) =>
     options.reduce((sum, opt) => sum + opt.votes, 0);
-
-  if (!mounted) {
-    return null;
-  }
 
   return (
     <div className="fade-in-section py-16 px-6 bg-white text-center border-t border-[#dce8f2] relative">
