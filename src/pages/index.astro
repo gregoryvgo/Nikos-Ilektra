@@ -55,13 +55,11 @@ import { eventData } from '../data/event';
       beneficiary={eventData.bankAccount.beneficiary}
     />
 
-    <Poll
-      client:load
-    />
+    {/* ΑΛΛΑΓΗ ΕΔΩ: client:only="react" για να τρέχει αποκλειστικά στον browser */}
+    <Poll client:only="react" />
 
-    <Guestbook
-      client:load
-    />
+    {/* ΑΛΛΑΓΗ ΕΔΩ: client:only="react" για να τρέχει αποκλειστικά στον browser */}
+    <Guestbook client:only="react" />
 
     <Footer
       client:visible

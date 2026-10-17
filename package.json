@@ -12,7 +12,9 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/node": "^11.1.8",
     "@astrojs/react": "^6.0.2",
+    "@astrojs/vercel": "^11.0.15",
     "@fontsource/gfs-didot": "^5.3.0",
     "@supabase/supabase-js": "^2.117.3",
     "@tailwindcss/vite": "^4.3.3",
