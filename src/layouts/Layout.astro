@@ -52,25 +52,5 @@ const socialImageURL = new URL(image, canonicalURL).href;
   </head>
   <body class="bg-[#fcfaf7] text-stone-800 antialiased selection:bg-[#c5a880]/20 selection:text-[#a68a56]">
     <slot />
-
-    {/* Observer script for scroll animations */}
-    <script>
-      window.addEventListener('DOMContentLoaded', () => {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
-              }
-            });
-          },
-          { threshold: 0.1 }
-        );
-
-        document.querySelectorAll('.fade-in-section').forEach((el) => {
-          observer.observe(el);
-        });
-      });
-    </script>
   </body>
 </html>
