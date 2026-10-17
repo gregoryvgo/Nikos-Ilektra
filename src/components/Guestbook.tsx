@@ -13,6 +13,7 @@ interface Wish {
 const ADMIN_PIN = '1001';
 
 export const Guestbook: React.FC = () => {
+  const [isMounted, setIsMounted] = useState(false);
   const [wishes, setWishes] = useState<Wish[]>([]);
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
@@ -26,6 +27,8 @@ export const Guestbook: React.FC = () => {
   const [pinError, setPinError] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+
     const fetchWishes = async () => {
       if (!supabase) return;
 
@@ -153,7 +156,7 @@ export const Guestbook: React.FC = () => {
   };
 
   return (
-    <div className="fade-in-section py-16 px-6 bg-[#f3f7fb] text-center border-t border-[#dce8f2] relative">
+    <div className={`fade-in-section py-16 px-6 bg-[#f3f7fb] text-center border-t border-[#dce8f2] relative ${isMounted ? 'is-visible' : ''}`}>
       <div className="max-w-sm mx-auto space-y-8">
         <div className="space-y-2">
           <p className="font-didot text-xs tracking-[0.35em] text-[#4a729c] font-semibold uppercase">

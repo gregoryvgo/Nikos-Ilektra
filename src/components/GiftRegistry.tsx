@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Copy, Check, Gift } from 'lucide-react';
 
 interface GiftRegistryProps {
@@ -12,7 +12,12 @@ export const GiftRegistry: React.FC<GiftRegistryProps> = ({
   iban = 'GR2301727090005709119954638',
   beneficiary = 'Νίκος & Ηλέκτρα',
 }) => {
+  const [isMounted, setIsMounted] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleCopy = async () => {
     try {
@@ -38,7 +43,7 @@ export const GiftRegistry: React.FC<GiftRegistryProps> = ({
   };
 
   return (
-    <div className="fade-in-section py-16 px-6 bg-[#f3f7fb] text-center border-t border-[#dce8f2]">
+    <div className={`fade-in-section py-16 px-6 bg-[#f3f7fb] text-center border-t border-[#dce8f2] ${isMounted ? 'is-visible' : ''}`}>
       <div className="max-w-sm mx-auto space-y-6">
         {/* Header */}
         <div className="space-y-2">

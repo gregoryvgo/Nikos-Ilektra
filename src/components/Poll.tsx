@@ -47,6 +47,7 @@ const initialPolls: PollQuestion[] = [
 const ADMIN_PIN = '1001';
 
 export const Poll: React.FC = () => {
+  const [isMounted, setIsMounted] = useState(false);
   const [polls, setPolls] = useState<PollQuestion[]>(initialPolls);
   const [userVotes, setUserVotes] = useState<Record<string, string>>({});
   const [isAdminOpen, setIsAdminOpen] = useState(false);
@@ -55,6 +56,8 @@ export const Poll: React.FC = () => {
   const [pinError, setPinError] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+    
     const savedVotes = window.localStorage.getItem('wedding_poll_votes');
     if (savedVotes) {
       try {
@@ -180,6 +183,23 @@ export const Poll: React.FC = () => {
 
   const getTotalVotes = (options: PollOption[]) =>
     options.reduce((sum, opt) => sum + opt.votes, 0);
+
+  if (!isMounted) {
+    return (
+      <div className="fade-in-section py-16 px-6 bg-white text-center border-t border-[#dce8f2] relative min-h-[400px]">
+        <div className="max-w-sm mx-auto space-y-8">
+          <div className="space-y-2">
+            <p className="font-didot text-xs tracking-[0.35em] text-[#4a729c] font-semibold uppercase">
+              Fun Zone
+            </p>
+            <h2 className="font-bodoni italic text-3xl sm:text-4xl text-[#0c1b33] font-normal tracking-wide">
+              Δημοσκόπηση
+            </h2>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fade-in-section py-16 px-6 bg-white text-center border-t border-[#dce8f2] relative">

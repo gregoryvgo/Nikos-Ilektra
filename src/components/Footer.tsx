@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Heart, Code2 } from 'lucide-react';
 
 interface FooterProps {
@@ -12,8 +12,14 @@ export const Footer: React.FC<FooterProps> = ({
   bride,
   year = '2027',
 }) => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
-    <footer className="fade-in-section py-12 px-6 bg-white text-center border-t border-[#dce8f2]">
+    <footer className={`fade-in-section py-12 px-6 bg-white text-center border-t border-[#dce8f2] ${isMounted ? 'is-visible' : ''}`}>
       <div className="max-w-sm mx-auto space-y-6">
         {/* Couple Signature Monogram */}
         <div className="space-y-1">

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { MapPin, Clock3, Navigation } from 'lucide-react';
 
 type LocationInfo = {
@@ -16,6 +16,12 @@ interface LocationsProps {
 }
 
 export const Locations: React.FC<LocationsProps> = ({ ceremony, reception }) => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const renderLocation = (location: LocationInfo) => (
     <div key={location.name} className="rounded-[28px] border border-[#dce8f2] bg-[#f7fafc] p-4 shadow-[0_8px_28px_rgba(12,27,51,0.04)]">
       <div className="mb-3 flex items-center gap-2">
@@ -64,7 +70,7 @@ export const Locations: React.FC<LocationsProps> = ({ ceremony, reception }) => 
   );
 
   return (
-    <section className="fade-in-section bg-white px-6 py-16 text-center">
+    <section className={`fade-in-section bg-white px-6 py-16 text-center ${isMounted ? 'is-visible' : ''}`}>
       <div className="mx-auto max-w-5xl">
         <div className="mb-8 space-y-2">
           <p className="font-didot text-xs tracking-[0.35em] text-[#4a729c] font-semibold uppercase">
