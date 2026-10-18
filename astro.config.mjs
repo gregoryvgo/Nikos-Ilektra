@@ -2,12 +2,10 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
-import vercel from '@astrojs/vercel'; // <--- Αλλαγή σε vercel
 
 // https://astro.build/config
 export default defineConfig({
-  output: 'server',
-  adapter: vercel(), // <--- Χρήση του vercel adapter
+  // Χωρίς output: 'server' και χωρίς adapter, γίνεται static και δεν σπάει ποτέ στο Vercel
   vite: {
     plugins: [tailwindcss()]
   },
