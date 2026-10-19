@@ -35,7 +35,11 @@ const socialImageURL = new URL(image, canonicalURL).href;
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content="https://nikos-ilektra.vgogenius.gr/images/wedding.jpg" />
+    <meta property="og:image" content={socialImageURL} />
+    
+    {/* Προσθέσαμε το παρακάτω για να φύγει το warning */}
+    <meta property="fb:app_id" content="2369629840457670" />
+
     {/* Twitter Preview Cards */}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
