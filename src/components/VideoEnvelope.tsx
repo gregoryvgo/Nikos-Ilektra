@@ -74,19 +74,23 @@ export const VideoEnvelope: React.FC<VideoEnvelopeProps> = ({
                   className="w-full h-full max-w-full max-h-full object-contain drop-shadow-xl"
                 />
               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-              {/* Scroll Down Indicator */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.7 }}
-                transition={{ delay: 1.0, duration: 0.8 }}
-                className="absolute bottom-3 flex flex-col items-center cursor-pointer"
-              >
-                <span className="font-sans text-[9px] tracking-[0.2em] uppercase text-[#0c1b33] mb-0.5 font-medium">
-                  Scroll
-                </span>
-                <div className="w-px h-4 bg-gradient-to-b from-[#0c1b33] to-transparent animate-bounce" />
-              </motion.div>
+        {/* Scroll Down Indicator - Σταθερό σε Mobile & Desktop */}
+        <AnimatePresence>
+          {isOpened && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.7 }}
+              transition={{ delay: 1.0, duration: 0.8 }}
+              className="absolute bottom-20 z-30 flex flex-col items-center cursor-pointer pointer-events-none"
+            >
+              <span className="font-sans text-[9px] tracking-[0.2em] uppercase text-[#0c1b33] mb-0.5 font-medium">
+                Scroll
+              </span>
+              <div className="w-px h-4 bg-gradient-to-b from-[#0c1b33] to-transparent animate-bounce" />
             </motion.div>
           )}
         </AnimatePresence>
