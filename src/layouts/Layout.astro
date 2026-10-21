@@ -13,8 +13,9 @@ const {
   image = 'https://res.cloudinary.com/shfuei10/image/upload/wedding.jpg',
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, 'https://nikos-ilektra.vgogenius.gr');
-const socialImageURL = new URL(image, canonicalURL).href;
+// Καρφωτό νέο URL για να ξεγελάσουμε οριστικά το Messenger
+const canonicalURL = 'https://nikos-ilektra.vgogenius.gr/?v=final';
+const socialImageURL = image;
 ---
 
 <!doctype html>
