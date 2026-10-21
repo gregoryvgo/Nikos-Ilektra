@@ -10,7 +10,8 @@ interface Props {
 const {
   title = 'Νίκος & Ηλέκτρα - Προσκλητήριο Γάμου',
   description = 'Σας προσκαλούμε να γιορτάσετε μαζί μας την πιο ξεχωριστή ημέρα της ζωής μας!',
-  image = '/images/wedding.jpg',
+  // Η εικόνα δείχνει πλέον κατευθείαν στο root (public/) με το νέο όνομα
+  image = '/og-wedding-final.jpg',
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, 'https://nikos-ilektra.vgogenius.gr');
