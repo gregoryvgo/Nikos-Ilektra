@@ -17,7 +17,7 @@ interface PollQuestion {
 const initialPolls: PollQuestion[] = [
   {
     id: 'attendance',
-    question: 'Θα μας τιμίσετε με την παρουσία σας;',
+    question: 'Θα μας τιμήσετε με την παρουσία σας;',
     options: [
       { id: '1', text: 'Ναι', votes: 0 },
       { id: '2', text: 'Όχι', votes: 0 },
@@ -271,6 +271,7 @@ export const Poll: React.FC = () => {
                             </span>
                           </div>
 
+                          {/* Εδώ εμφανίζεται ΜΟΝΟ το ποσοστό στους κανονικούς χρήστες */}
                           {hasVoted && (
                             <span className="font-mono text-xs font-semibold text-[#0c1b33] shrink-0">
                               {percentage}%
@@ -281,12 +282,6 @@ export const Poll: React.FC = () => {
                     );
                   })}
                 </div>
-
-                {hasVoted && (
-                  <p className="text-[11px] text-right font-sans text-[#4a729c] font-medium">
-                    Σύνολο ψήφων: {totalVotes}
-                  </p>
-                )}
               </div>
             );
           })}
@@ -376,9 +371,16 @@ export const Poll: React.FC = () => {
                         key={poll.id}
                         className="bg-[#f3f7fb] p-4 rounded-xl border border-[#dce8f2] space-y-3"
                       >
-                        <h4 className="font-bodoni text-sm font-medium text-[#0c1b33]">
-                          {poll.question}
-                        </h4>
+                        {/* Προσθήκη του "Σύνολο ψήφων" δίπλα στον τίτλο της ερώτησης στο Admin Dashboard */}
+                        <div className="flex justify-between items-start gap-2">
+                          <h4 className="font-bodoni text-sm font-medium text-[#0c1b33]">
+                            {poll.question}
+                          </h4>
+                          <span className="text-[11px] font-sans font-medium text-[#4a729c] whitespace-nowrap bg-[#dce8f2]/40 px-2 py-1 rounded-md">
+                            Σύνολο: {totalVotes}
+                          </span>
+                        </div>
+                        
                         <div className="space-y-2">
                           {poll.options.map((opt) => {
                             const percentage = totalVotes > 0 ? Math.round((opt.votes / totalVotes) * 100) : 0;
@@ -386,6 +388,7 @@ export const Poll: React.FC = () => {
                               <div key={opt.id} className="text-xs space-y-1">
                                 <div className="flex justify-between font-sans text-[#0c1b33]">
                                   <span className="font-medium">{opt.text}</span>
+                                  {/* Στο Admin εμφανίζονται και οι απόλυτοι αριθμοί ψήφων */}
                                   <span className="font-mono font-semibold">
                                     {opt.votes} ψήφοι ({percentage}%)
                                   </span>
