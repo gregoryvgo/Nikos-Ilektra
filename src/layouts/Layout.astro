@@ -10,12 +10,13 @@ interface Props {
 const {
   title = 'Νίκος & Ηλέκτρα - Προσκλητήριο Γάμου',
   description = 'Σας προσκαλούμε να γιορτάσετε μαζί μας την πιο ξεχωριστή ημέρα της ζωής μας!',
-  image = 'https://res.cloudinary.com/shfuei10/image/upload/wedding.jpg',
+  // Δείχνουμε τον σωστό τοπικό φάκελο
+  image = '/images/og-wedding-final.jpg',
 } = Astro.props;
 
-// Καρφωτό νέο URL για να ξεγελάσουμε οριστικά το Messenger
-const canonicalURL = 'https://nikos-ilektra.vgogenius.gr/?v=final';
-const socialImageURL = image;
+// Επαναφέρουμε τα καθαρά URL για να δουλεύουν άψογα Viber & Instagram
+const canonicalURL = new URL(Astro.url.pathname, 'https://nikos-ilektra.vgogenius.gr');
+const socialImageURL = new URL(image, canonicalURL).href;
 ---
 
 <!doctype html>
