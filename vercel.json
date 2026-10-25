@@ -1,0 +1,22 @@
+{
+  "headers": [
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Accept-Ranges",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "source": "/images/og-wedding-final.jpg",
+      "headers": [
+        {
+          "key": "Accept-Ranges",
+          "value": "none"
+        }
+      ]
+    }
+  ]
+}
