@@ -184,11 +184,11 @@ export const Story: React.FC<StoryProps> = ({
         </div>
 
         {/* Story Narrative Box */}
-        <div className="relative px-7 py-8 rounded-2xl bg-[#f3f7fb] border border-[#dce8f2] shadow-[0_4px_20px_rgba(12,27,51,0.03)]">
+        <div className="relative px-7 py-8 rounded-2xl bg-[#f3f7fb] border border-[#dce8f2] shadow-[0_4px_20px_rgba(12,27,51,0.03)] text-left">
           <span className="font-bodoni italic text-6xl text-[#4a729c]/25 absolute -top-4 left-3 select-none leading-none">
             “
           </span>
-          <div className="font-serif text-base sm:text-lg leading-relaxed text-stone-700 font-light text-justify pt-3 px-1 space-y-5">
+          <div className="font-serif text-base sm:text-lg leading-relaxed text-stone-700 font-light pt-3 px-1 space-y-5">
             <p>
               Δεν ήξερε την Αθήνα, έτσι πήρε πιο νωρίς τον δρόμο για την στάση του τρόλεϊ κοντά στο Σύνταγμα.
             </p>
@@ -198,42 +198,42 @@ export const Story: React.FC<StoryProps> = ({
             <p>
               Ανέμελος, με άδεια τσέπη και μυαλό, φορώντας ακουστικά, κοίταζα έξω από το παράθυρο τα αστικά φώτα που λαμπυρίζαν μέσα στη νύχτα. Γυρνώντας το κεφάλι μου·
             </p>
-            <p className="font-medium text-[#0c1b33] text-left italic">
+            <p>
               Την είδα. 
             </p>
             <p>
               Καθόταν προσεκτικά στην θέση πίσω από τον οδηγό του τρόλεϊ. Κοιτούσε και εκείνη έξω σαν να ήταν στο εξωτερικό. 
             </p>
-            <p className="font-medium text-[#0c1b33] text-left italic">
+            <p>
               Έλαμπε.
             </p>
-            <p className="italic">
+            <p>
               "Ηλέκτρα;" είπα.
             </p>
-            <p className="italic">
+            <p>
               "Νίκο;" μου απάντησε.
             </p>
             <p>
               Οι στάσεις περνούσαν και έφτανα στην δικιά μου. Την πέρασα.<br />
               Η καρδιά μου έλεγε "Κάτσε μια ακόμα".<br />
-              "Και άλλη μία, κι άλλη μια…" 
+              "Και άλλη μία, κι άλλη μία..." 
             </p>
             <p>
               Ώσπου την ώρα που εν τέλει κατέβαινα, με το ένα πόδι έξω από την ανοιχτή πόρτα· Την ρώτησα.
             </p>
-            <p className="italic">
+            <p>
               "Έχεις σχολή αύριο πρωί;" 
             </p>
-            <p className="italic">
+            <p>
               "Όχι" απάντησε.
             </p>
-            <p className="italic">
+            <p>
               "Έλα να σου μάθω την Κυψέλη" είπα.
             </p>
-            <p className="italic">
+            <p>
               "Εντάξει." 
             </p>
-            <p className="font-medium text-[#0c1b33] text-left pt-2">
+            <p className="pt-2">
               Εκείνο το υπέροχο βράδυ, μας έφερε στην πιο σημαντική ημέρα της ζωής μας.
             </p>
           </div>

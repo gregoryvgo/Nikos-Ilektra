@@ -72,7 +72,7 @@ export const GiftRegistry: React.FC<GiftRegistryProps> = ({
               {bankName}
             </span>
             <p className="font-sans text-xs text-[#4a729c] font-normal">
-              Δικαιούχοι: <span className="font-bold text-[#0c1b33]">ΒΓΟΝΤΖΑΣ ΝΙΚΟΛΑΟΣ / ΝΙΚΟΛΑΪΔΟΥ ΗΛΕΚΤΡΑ ΕΙΡΗΝΗ</span>
+              Δικαιούχοι: ΒΓΟΝΤΖΑΣ ΝΙΚΟΛΑΟΣ / ΝΙΚΟΛΑΪΔΟΥ ΗΛΕΚΤΡΑ ΕΙΡΗΝΗ
             </p>
           </div>
 

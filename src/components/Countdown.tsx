@@ -43,7 +43,7 @@ export const Countdown: React.FC<CountdownProps> = ({ targetDate, formattedDate 
     const event = {
       title: 'Γάμος Νίκος & Ηλέκτρα',
       description: 'Σας περιμένουμε στον γάμο μας!',
-      location: 'Ι.Ν Εσταυρωμένου Εσταυρωμένου Εσταυρωμένου. Αγίου Δημητρίου',
+      location: 'Ι.Ν Εσταυρωμένου, Αιγάλεω',
       start: '20280928T160000Z',
       end: '20280928T230000Z',
     };
@@ -156,22 +156,9 @@ export const Countdown: React.FC<CountdownProps> = ({ targetDate, formattedDate 
           </div>
         </div>
 
-        {/* Επιπλέον Κείμενα */}
-        <div className="space-y-3 pt-3">
-          <p className="font-bodoni italic text-base sm:text-lg text-[#0c1b33] leading-relaxed">
-            Παρακαλούμε επιβεβαιώστε την παρουσία σας <br />
-            έως τις{' '}
-            <strong className="font-semibold not-italic text-[#4a729c] whitespace-nowrap">
-              10/12/2026
-            </strong>
-            .
-          </p>
-          <p className="font-bodoni italic font-semibold text-xl sm:text-2xl text-[#4a729c]">
-            Θα χαρούμε πολύ να σας δούμε!
-          </p>
-        </div>
-
       </div>
     </div>
   );
 };
+
+export default Countdown;

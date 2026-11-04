@@ -30,11 +30,23 @@ import { eventData } from '../data/event';
       formattedDate={eventData.formattedDate}
     />
 
+    {/* Κάρτα με τις πληροφορίες δεξίωσης */}
+    <section class="py-16 px-6 bg-white text-center">
+      <div class="max-w-xl mx-auto">
+        <div class="rounded-2xl overflow-hidden shadow-[0_10px_30px_rgba(12,27,51,0.08)] border border-[#dce8f2]">
+          <img 
+            src="/images/invitation-details.jpg" 
+            alt="Πληροφορίες Δεξίωσης" 
+            class="w-full h-auto object-cover"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </section>
+
     <Story
       client:visible
-      title={eventData.story.title}/>
-      text={eventData.story.text}
-      coupleHashtag={eventData.couple.hashtag}
+      title={eventData.story.title}
     />
 
     <Locations
@@ -55,10 +67,8 @@ import { eventData } from '../data/event';
       beneficiary={eventData.bankAccount.beneficiary}
     />
 
-    {/* ΑΛΛΑΓΗ ΕΔΩ: client:only="react" για να τρέχει αποκλειστικά στον browser */}
     <Poll client:only="react" />
 
-    {/* ΑΛΛΑΓΗ ΕΔΩ: client:only="react" για να τρέχει αποκλειστικά στον browser */}
     <Guestbook client:only="react" />
 
     <Footer
