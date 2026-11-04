@@ -10,7 +10,6 @@ interface GiftRegistryProps {
 export const GiftRegistry: React.FC<GiftRegistryProps> = ({
   bankName = 'Τράπεζα Πειραιώς',
   iban = 'GR2301727090005709119954638',
-  beneficiary = 'Νίκος & Ηλέκτρα',
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -24,10 +23,9 @@ export const GiftRegistry: React.FC<GiftRegistryProps> = ({
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(iban);
       } else {
-        // Fallback μέθοδος για παλαιότερους browsers ή μη ασφαλή contexts
         const textArea = document.createElement('textarea');
         textArea.value = iban;
-        textArea.style.position = 'fixed'; // Αποφυγή scroll
+        textArea.style.position = 'fixed';
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
@@ -74,7 +72,7 @@ export const GiftRegistry: React.FC<GiftRegistryProps> = ({
               {bankName}
             </span>
             <p className="font-sans text-xs text-[#4a729c] font-normal">
-              Δικαιούχοι: <span className="font-normal text-[#4a729c]">{beneficiary}</span>
+              Δικαιούχοι: <span className="font-bold text-[#0c1b33]">ΒΓΟΝΤΖΑΣ ΝΙΚΟΛΑΟΣ / ΝΙΚΟΛΑΪΔΟΥ ΗΛΕΚΤΡΑ ΕΙΡΗΝΗ</span>
             </p>
           </div>
 
@@ -112,3 +110,5 @@ export const GiftRegistry: React.FC<GiftRegistryProps> = ({
     </div>
   );
 };
+
+export default GiftRegistry;

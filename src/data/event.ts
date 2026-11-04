@@ -94,7 +94,7 @@ export const eventData: EventData = {
   bankAccount: {
     bankName: "Τράπεζα Πειραιώς",
     iban: "GR2301727090005709119954638",
-    beneficiary: "Νίκος & Ηλέκτρα",
+    beneficiary: "ΒΓΟΝΤΖΑΣ ΝΙΚΟΛΑΟΣ / ΝΙΚΟΛΑΪΔΟΥ ΗΛΕΚΤΡΑ ΕΙΡΗΝΗ",
   },
   rsvpDeadline: "10 Δεκεμβρίου 2026",
 };

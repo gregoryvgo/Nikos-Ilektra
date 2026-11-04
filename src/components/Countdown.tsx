@@ -41,7 +41,7 @@ export const Countdown: React.FC<CountdownProps> = ({ targetDate, formattedDate 
 
   const getGoogleCalendarUrl = () => {
     const event = {
-      title: 'Γάμος νίκος & Ηλέκτρα',
+      title: 'Γάμος Νίκος & Ηλέκτρα',
       description: 'Σας περιμένουμε στον γάμο μας!',
       location: 'Ι.Ν Εσταυρωμένου Εσταυρωμένου Εσταυρωμένου. Αγίου Δημητρίου',
       start: '20280928T160000Z',
